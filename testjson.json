@@ -1,0 +1,31 @@
+{
+    "JobID":"420000",
+    "ItemID":"CPC002235",
+    "CustomerID":"Titleist",
+    "DateFound":"datetime.date(2022, 8, 1)",
+    "InspectShift":"1st",
+    "InspectGluer":"Gluer 5",
+    "TotalSamples":599,
+    "Defective Case":{
+    "0":{
+    "Defect Code":"P1",
+    "Pieces Defective":"30",
+    "Total Pieces Sampled":"32"
+    },
+    "1":{
+    "Defect Code":"D3",
+    "Pieces Defective":"12",
+    "Total Pieces Sampled":"32"
+    },
+    "2":{
+    "Defect Code":"G1",
+    "Pieces Defective":"14",
+    "Total Pieces Sampled":"32"
+    },
+    "3":{
+    "Defect Code":"P1",
+    "Pieces Defective":"23",
+    "Total Pieces Sampled":"444"
+    }
+    }
+    }
