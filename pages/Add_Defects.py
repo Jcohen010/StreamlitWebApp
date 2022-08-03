@@ -40,10 +40,11 @@ st.title("Final Inspection Form")
 st.checkbox("Spanish")
 st.subheader("Job Information")
 st.markdown("---")
-Job_Number = st.text_input(label="Job Number")
+Job_Number = st.text_input(label="Job Number", max_chars=6)
 Item_Number = st.text_input(label="Item Number")
 Customer = st.text_input(label="Customer")
 Case_Count  = st.number_input(label="Case Qty", step=1)
+Case_Number = st.text_input(label="Case Number")
 st.subheader("Inspection Information")
 st.markdown("---")
 Inspector_Number = st.text_input(label="Inspector Number")
@@ -107,7 +108,7 @@ if submit:
         df['DefectiveSamples'][i] = df.loc[i,'Defective Case'].get('DefectiveSamples')
         df['TotalSamples'][i] = df.loc[i,'Defective Case'].get('TotalSamples')
     st.write(df)
-
+    df.to_csv(f"{str(Inspection_Date)}"+f"_{Case_Number}.csv", index=False)
 
 
 
