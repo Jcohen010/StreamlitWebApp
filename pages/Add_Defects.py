@@ -1,30 +1,8 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
-# import psycopg2
 
-# conn = psycopg2.connect(
-#     database="CurtisDW",
-#     user='postgres',
-#     password='curtis1845',
-#     host='localhost',
-#     port= '5433'
-# )
-# conn.autocommit = True
-# cursor = conn.cursor()
 
-# def single_insert(conn, insert_req):
-#     """ Execute a single INSERT request """
-#     cursor = conn.cursor()
-#     try:
-#         cursor.execute(insert_req)
-#         conn.commit()
-#     except (Exception, psycopg2.DatabaseError) as error:
-#         print("Error: %s" % error)
-#         conn.rollback()
-#         cursor.close()
-#         return 1
-#     cursor.close()
 
 logo = Image.open("Small Curtis Logo.jpg")
 Gluer_List = []
@@ -39,17 +17,17 @@ st.title("Final Inspection Form")
 st.checkbox("Spanish")
 st.subheader("Job Information")
 st.markdown("---")
-Job_Number = st.text_input(label="Job Number", max_chars=6)
-Item_Number = st.text_input(label="Item Number")
-Customer = st.text_input(label="Customer")
-Case_Count  = st.number_input(label="Case Qty", step=1)
+JobID = st.text_input(label="Job Number", max_chars=6)
+ItemID = st.text_input(label="Item Number")
+CustomerID = st.text_input(label="Customer")
+CaseQty  = st.number_input(label="Case Qty", step=1)
 Case_Number = st.text_input(label="Case Number")
 st.subheader("Inspection Information")
 st.markdown("---")
-Inspector_Number = st.text_input(label="Inspector Number")
-Inspection_Station = st.text_input(label="Inspection Station")
-Inspection_Shift  = st.text_input(label="Inspection Shift")
-Inspection_Date = st.date_input("Inspection Date")
+InspectorID = st.text_input(label="Inspector Number")
+InspectStation = st.text_input(label="Inspection Station")
+InspectShift  = st.text_input(label="Inspection Shift")
+DateFound = st.date_input("Inspection Date")
 st.subheader("Defective Cases")
 st.markdown("---")
 
@@ -85,13 +63,13 @@ for i in range(st.session_state.n_rows):
 submit = st.button("Submit", key=1)
 
 submissiondict = {
-            "JobID" : Job_Number,
-            "ItemID" : Item_Number, 
-            "CustomerID" : Customer,
-            "DateFound": str(Inspection_Date),
-            "InspectShift": Inspection_Shift, 
-            "InspectGluer" : Inspection_Station, 
-            "CaseQty" : Case_Count,
+            "JobID" : JobID,
+            "ItemID" : ItemID, 
+            "CustomerID" : CustomerID,
+            "DateFound": str(DateFound),
+            "InspectShift": InspectShift, 
+            "InspectGluer" : InspectStation, 
+            "CaseQty" : CaseQty,
             "Defective Case": Defective_Case
                 }
 
@@ -106,40 +84,9 @@ if submit:
         df['DefectCode'][i] = df.loc[i,'Defective Case'].get('DefectCode')
         df['DefectiveSamples'][i] = df.loc[i,'Defective Case'].get('DefectiveSamples')
         df['TotalSamples'][i] = df.loc[i,'Defective Case'].get('TotalSamples')
+    df = df.drop(df.columns[[7]], axis=1)
+    df.to_csv(f"{str(DateFound)}"+f"_{Case_Number}.csv", index=False, )    
     st.write(df)
-    df.to_csv(f"{str(Inspection_Date)}"+f"_{Case_Number}.csv", index=False)
 
-
-
-
-        # for i in df.index:
-        #     query = """
-        #     INSERT into Fact_Defect_Event(JobID, 
-        #         ItemID, 
-        #         CustomerID, 
-        #         DateFound, 
-        #         InspectShift, 
-        #         InspectGluer, 
-        #         DefectCode, 
-        #         CaseQty, 
-        #         DefectiveSamples,
-        #         TotalSamples
-        #         ) values(%s,%s,%s,%s,%s,%s,%s,%s,%s, %s);
-        #         """ % (df['JobID'], df['ItemID'], df['CustomerID'], df['DateFound'], df['InspectShift'], df['InspectGluer'], df['DefectCode'], df['CaseQty'], df['DefectiveSamples'], df['TotalSamples'])
-        #     cursor.execute(query)
-
-    
-    # sql = f'''INSERT INTO Fact_Defect_Event(
-    #     JobID, 
-    #     ItemID, 
-    #     CustomerID, 
-    #     DateFound, 
-    #     InspectShift, 
-    #     InspectGluer, 
-    #     DefectCode, 
-    #     CaseQty, 
-    #     DefectiveSamples, 
-    #     TotalSamples) VALUES (df);'''
-    # cursor.execute(sql)
     st.success("Your submission was recorded.")
 
