@@ -1,30 +1,30 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
-import psycopg2
+# import psycopg2
 
-conn = psycopg2.connect(
-    database="CurtisDW",
-    user='postgres',
-    password='curtis1845',
-    host='localhost',
-    port= '5433'
-)
-conn.autocommit = True
-cursor = conn.cursor()
+# conn = psycopg2.connect(
+#     database="CurtisDW",
+#     user='postgres',
+#     password='curtis1845',
+#     host='localhost',
+#     port= '5433'
+# )
+# conn.autocommit = True
+# cursor = conn.cursor()
 
-def single_insert(conn, insert_req):
-    """ Execute a single INSERT request """
-    cursor = conn.cursor()
-    try:
-        cursor.execute(insert_req)
-        conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("Error: %s" % error)
-        conn.rollback()
-        cursor.close()
-        return 1
-    cursor.close()
+# def single_insert(conn, insert_req):
+#     """ Execute a single INSERT request """
+#     cursor = conn.cursor()
+#     try:
+#         cursor.execute(insert_req)
+#         conn.commit()
+#     except (Exception, psycopg2.DatabaseError) as error:
+#         print("Error: %s" % error)
+#         conn.rollback()
+#         cursor.close()
+#         return 1
+#     cursor.close()
 
 logo = Image.open("Small Curtis Logo.jpg")
 Gluer_List = []
