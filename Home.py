@@ -15,8 +15,4 @@ st.button("Add Defects")
 
 st.expander("See all Submissions")
 
-
-    
-
-
 # st.text_input(label="Column Name", key=i) #Pass index as key

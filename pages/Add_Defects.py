@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
+from sqlalchemy import create_engine
 
-
+engine = create_engine("postgresql://postgres:curtis1845@localhost:5433/CurtisDW")
 
 logo = Image.open("Small Curtis Logo.jpg")
 Gluer_List = []
@@ -55,38 +56,52 @@ for i in range(st.session_state.n_rows):
         Total_Pieces_Sampled = st.text_input(label="Total Pieces Sampled", key=i)
 
     Defective_Case[i] = {
-                            "DefectCode" : Defect_Code,
-                            "DefectiveSamples" : Pieces_Defective,
-                            "TotalSamples" : Total_Pieces_Sampled
+                            "defectcode" : Defect_Code,
+                            "defectivesamples" : Pieces_Defective,
+                            "totalsamples" : Total_Pieces_Sampled
                         }
 
 submit = st.button("Submit", key=1)
 
 submissiondict = {
-            "JobID" : JobID,
-            "ItemID" : ItemID, 
-            "CustomerID" : CustomerID,
-            "DateFound": str(DateFound),
-            "InspectShift": InspectShift, 
-            "InspectGluer" : InspectStation, 
-            "CaseQty" : CaseQty,
-            "Defective Case": Defective_Case
+            "jobID" : JobID,
+            "itemID" : ItemID, 
+            "customerID" : CustomerID,
+            "datefound": str(DateFound),
+            "inspectshift": InspectShift, 
+            "inspectgluer" : InspectStation, 
+            "caseqty" : CaseQty,
+            "defective case": Defective_Case
                 }
 
 columns = submissiondict.keys()
+
+def insert_db(dataframe, engine, table):
+    conn = engine.connect()
+    try:
+        dataframe.to_sql(table, conn, if_exists='append', index=False)
+    except Exception:
+        st.write("error submitting")
+    else:
+        st.success("Your submission was recorded.")
+    finally:
+        conn.close()
+
 if submit:
     df = pd.DataFrame(submissiondict)
-    df.insert(8,'DefectCode', "")
-    df.insert(9, 'DefectiveSamples', "")
-    df.insert(10, 'TotalSamples', "")
+    df.insert(8,'defectcode', "")
+    df.insert(9, 'defectivesamples', "")
+    df.insert(10, 'totalsamples', "")
     
     for i,row in df.iterrows():
-        df['DefectCode'][i] = df.loc[i,'Defective Case'].get('DefectCode')
-        df['DefectiveSamples'][i] = df.loc[i,'Defective Case'].get('DefectiveSamples')
-        df['TotalSamples'][i] = df.loc[i,'Defective Case'].get('TotalSamples')
+        df['defectcode'][i] = df.loc[i,'defective case'].get('defectcode')
+        df['defectivesamples'][i] = df.loc[i,'defective case'].get('defectivesamples')
+        df['totalsamples'][i] = df.loc[i,'defective case'].get('totalsamples')
     df = df.drop(df.columns[[7]], axis=1)
     df.to_csv(f"{str(DateFound)}"+f"_{Case_Number}.csv", index=False, )    
     st.write(df)
+    # Lets try inserting the dataframe using the df.to_sequel method 
+    insert_db(df, engine, "Stage_Defect_Event")
 
-    st.success("Your submission was recorded.")
+    
 
