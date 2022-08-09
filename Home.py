@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
+from sqlalchemy import create_engine
 
+engine = create_engine("postgresql://postgres:curtis1845@localhost:5433/CurtisDW")
 
 logo = Image.open("Small Curtis Logo.jpg")
 
@@ -11,8 +13,10 @@ st.image(logo, width=100, )
 st.title("Final Inspection Data Collection")
 st.checkbox("Spanish")
 
-st.button("Add Defects")
+expander = st.expander("View all Submissions")
+with expander:
+    conn = engine.connect()
+    df = pd.read_sql("Stage_Defect_Event", engine)
+    st.write(df)
+    
 
-st.expander("See all Submissions")
-
-# st.text_input(label="Column Name", key=i) #Pass index as key
