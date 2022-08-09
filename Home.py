@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 
 engine = create_engine("postgresql://postgres:curtis1845@localhost:5433/CurtisDW")
 
+
 logo = Image.open("Small Curtis Logo.jpg")
 
 st.set_page_config(page_title="Final Inspection Form", page_icon= logo, layout="centered")
