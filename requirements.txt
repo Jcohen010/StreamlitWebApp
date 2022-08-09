@@ -1,2 +1,3 @@
 SQLAlchemy
 Pandas
+psycopg2-binary
