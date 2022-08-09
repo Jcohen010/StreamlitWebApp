@@ -3,7 +3,15 @@ import pandas as pd
 from PIL import Image
 from sqlalchemy import create_engine
 
-engine = create_engine("postgresql://postgres:curtis1845@localhost:5433/CurtisDW")
+
+#fetch dbcredentials
+credsfile = "databasecredentials.txt"
+
+with open(credsfile) as file:
+    conn_string = file.read()
+print(conn_string)
+
+engine = create_engine(conn_string)
 
 logo = Image.open("Small Curtis Logo.jpg")
 Gluer_List = []
