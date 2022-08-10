@@ -2,14 +2,14 @@ import streamlit as st
 import pandas as pd
 from PIL import Image
 from sqlalchemy import create_engine
-
+import toml
 
 #fetch dbcredentials
-credsfile = "databasecredentials.txt"
+credsfile = ".streamlit/secrets.toml"
 
-with open(credsfile) as file:
-    conn_string = file.read()
-print(conn_string)
+content  = toml.load(credsfile)
+
+conn_string = content['connection_string']
 
 engine = create_engine(conn_string)
 
