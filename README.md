@@ -18,7 +18,7 @@ One form in particular caught my eye as a perfect candidate for kicking off the 
 
 ## The Solution
 
-FNow that I've found a web development environment based in python, develop a web app that could be run on the final inspectors' samsung tablets 9-+************out on the production floor. Each submission would route the data captured in the digital form directly to the company's data warehouse staging area. 
+FNow that I've found a web development environment based in python, develop a web app that could be run on the final inspectors' samsung tablets out on the production floor. Each submission would route the data captured in the digital form directly to the company's data warehouse staging area. 
 
 ## Resources
 
