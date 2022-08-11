@@ -18,7 +18,19 @@ One form in particular caught my eye as a perfect candidate for kicking off the 
 
 ## The Solution
 
-FNow that I've found a web development environment based in python, develop a web app that could be run on the final inspectors' samsung tablets 9-+************out on the production floor. Each submission would route the data captured in the digital form directly to the company's data warehouse staging area. 
+Initially, I searched for third party applications that had use cases similar to ours. We had one particular requirment that needed to be met, the ability to loop through a section of the form an arbitrary number of times and produce a dataframe in which the header information for the inpection was repeated for each iteration of the looped section. 
+
+*Example below:*
+
+|jobID|itemID|customerID|datefound |inspectshift|inspectgluer|caseqty|defectcode|defectivesamples|totalsamples|
+|-----|------|----------|----------|------------|------------|-------|----------|----------------|------------|
+|4200 |CPC000|Titleist  |2022-08-10|1st Shift   |Gluer 12    |1200   |P1        |12              |32          |
+|4200 |CPC000|Titleist  |2022-08-10|1st Shift   |Gluer 12    |1200   |D4        |1               |32          |
+|4200 |CPC000|Titleist  |2022-08-10|1st Shift   |Gluer 12    |1200   |G11       |2               |32          |
+
+99% of form building applications I found were too basic to allow for this feature, except for an application called GoCanvas, a fully managed cloud form builder. It had everything we needed: a pleasant GUI on the form building side, cloud storage for collected data, integration capablities, built in analytics of submission activity and app usage; it even had the capability to generate templated pdf's upon form submission. When the price tag was revealed, I could sense my manager was doubtful that upper management would agree to the investment. 
+
+I started developing a solution myself. Using Streamlit, a web app development environment based in python, I built an app that could be run on the final inspectors' samsung tablets out on the production floor. Each submission routes captured data in the digital form directly to the company's **[data warehouse](https://github.com/Jcohen010/CompanyDW) staging area. 
 
 ## Resources
 
@@ -31,3 +43,6 @@ Tools
 Languages
 * Python
 * SQL
+
+## App Preview
+![App Preview](App Preview.mp4)
