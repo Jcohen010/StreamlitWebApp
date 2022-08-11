@@ -18,7 +18,7 @@ One form in particular caught my eye as a perfect candidate for kicking off the 
 
 ## The Solution
 
-#### Plan A
+### Plan A
 I initially started searching for a third party form building application with a similar use case. One aspect of the candidate app was vital: the capability to loop a particular section/question an arbitrary amount of times, allowing inspectors to only have to enter header inpection information once, even if there ends up being several cases with defects. Furthermore, the JSON or .csv schema would have to match that of target table in the data warehouse.
 
 *Example below:*
@@ -29,10 +29,11 @@ I initially started searching for a third party form building application with a
 |4200 |7576|Test  |2022-08-10|1st Shift   |Machine 12    |1200   |F4        |1               |32          |
 |4200 |7576|tes  |2022-08-10|1st Shift   |Machine 12    |1200   |L11       |2               |32          |
 
-99% of the form building web apps I found were to basic to allow for the specific functionality that we required. Enter GoCanvas. They offered everything we needed: full customizability, pleasant GUI form builder, full integration capabilites, .pdf generation upon form submission; they even accomodated the looping section functionality we were seeking. Only issue: sky high pricing. My manager and I both knew upper management was unlikely to support the investment.
 
-#### Plan B
-I decided to build an app myself for the company. Using Streamlit, a web development environment based in python, I developed an app that could be run on the final inspectors' samsung tablets out on the production floor. Each submission routes captured data directly to the company's [data warehouse](https://github.com/Jcohen010/CompanyDW) staging area. 
+99% of the form building web apps I found were too basic to allow for the specific functionality that we required. Enter GoCanvas. They offered everything we needed: full customizability, pleasant GUI form builder, full integration capabilites, .pdf generation upon form submission; they even accomodated the looping section functionality we were seeking. The only issue: the pricing was incredibly high, increasingly exponentially as more users were added. My manager and I both knew upper management was unlikely to support the investment.
+
+### Plan B
+I decided to build an app myself for the company. Using Streamlit, a web development environment based in python, I developed an app that could be run locally on my machine and accessed securely from the final inspectors' samsung tablets out on the production floor. Each submission routes captured data directly to the company's [data warehouse](https://github.com/Jcohen010/CompanyDW) staging area. 
 
 ## Resources
 
