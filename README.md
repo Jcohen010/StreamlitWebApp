@@ -46,3 +46,13 @@ Tools
 Languages
 * Python
 * SQL
+
+## Features
+There were a few key features that the Director of Quality and the inspection team were looking:
+* Spanish/English Toggle
+* Auto-Fill Sample Quantity depending on Case Quantity according to AQL sampling guidelines
+* Local Hosting for increased security
+* Ensured Accessability for all users
+
+
+[App Preview](https://user-images.githubusercontent.com/104105293/184428035-28b63ce4-dc52-4d52-aee7-1a61603e2267.webm)
