@@ -1,5 +1,5 @@
 # StreamlitWebApp
-Web Application for Final Inspection Data Collectiom
+Web Application for Final Inspection Data Collection
 
 ![Header Image](https://www.sas.com/en_us/insights/big-data/what-is-big-data/_jcr_content/par/styledcontainer_335204280/image.img.jpg/1457718453446.jpg)
 
