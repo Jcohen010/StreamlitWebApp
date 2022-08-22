@@ -20,18 +20,9 @@ st.set_page_config(page_title="Final Inspection Form", page_icon= logo, layout="
 
 st.image(logo, width=100, )
 st.title("Final Inspection Data Collection")
-checkbox = st.checkbox("Español")
 
-if checkbox: 
-    expander = st.expander("Ver todas las presentaciones")
-    with expander:
-        conn = engine.connect()
-        df = pd.read_sql("Stage_Defect_Event", engine)
-        st.write(df)
-else:
-    expander = st.expander("View all Submissions")
-    with expander:
-        conn = engine.connect()
-        df = pd.read_sql("Stage_Defect_Event", engine)
-        st.write(df)
-
+expander = st.expander("View Recent Submissions")
+with expander:
+    conn = engine.connect()
+    df = pd.read_sql("stage_defect_event", engine)
+    st.write(df)
