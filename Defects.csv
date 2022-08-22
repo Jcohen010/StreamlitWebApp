@@ -1,0 +1,53 @@
+defectcode,defectdesc,departmentid
+None,None, None
+P1,Color Deviation,PRINTING
+P2,Print Register,PRINTING
+P3,Marks,PRINTING
+P4,Scratches,PRINTING
+P5,Hickies,PRINTING
+P6,Reticulation,PRINTING
+P7,Missing Coating,PRINTING
+P8,Dryup,PRINTING
+P9,Smashes,PRINTING
+P10,Water Mark,PRINTING
+ES1,Embossin Register,STAMPING
+ES2,Missing Print,STAMPING
+ES3,Light Impression,STAMPING
+ES4,Stamping Register,STAMPING
+ES5,Hologram,STAMPING
+ES6,Missing Leaf,STAMPING
+ES7,Over-Stamp,STAMPING
+ES8,Picks,STAMPING
+ES9,Voids,STAMPING
+D1,Cutting Register,DIE CUTTING
+D2,Pin Marks,DIE CUTTING
+D3,Rubber Marks,DIE CUTTING
+D4,Feed Marks,DIE CUTTING
+D5,Cut Scores,DIE CUTTING
+D6,Perforations,DIE CUTTING
+D7,Cracking,DIE CUTTING
+D8,Score Crack,DIE CUTTING
+D9,Not Cut,DIE CUTTING
+D10,Dent,DIE CUTTING
+D11,Tearing,DIE CUTTING
+D12,Line up,DIE CUTTING
+D13,Hangs,DIE CUTTING
+CW1,Excess Window,FINISHING
+CW2,Cello Excess Glue,FINISHING
+CW3,Cell Insufficient Glue,FINISHING
+CW4,Cello Belt Mark,FINISHING
+CW5,Cellow Scratch,FINISHING
+G1,Line up,FINISHING
+G2,Excess Glue,FINISHING
+G3,Insufficient Glue,FINISHING
+G4,Trombone Marks,FINISHING
+G5,Beltmarks ,FINISHING
+G6,Rubbing Scratches,FINISHING
+G7,Hammer Marks,FINISHING
+G8,Label/Tag Placement,FINISHING
+G9,Feeding Issues,FINISHING
+G10,Prefold,FINISHING
+G11,Stripper Damage,FINISHING
+G12,Wrinkles,FINISHING
+G13,Seepage,FINISHING
+G14,Machine Damage,FINISHING
