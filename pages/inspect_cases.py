@@ -6,10 +6,7 @@ from PIL import Image
 
 from sqlalchemy import create_engine
 
-from pyzbar.pyzbar import decode
-
 import toml
-from tomlkit import value
 
 #fetch dbcredentials
 credsfile = ".streamlit/secrets.toml"
@@ -17,10 +14,12 @@ content  = toml.load(credsfile)
 conn_string = content['connection_string']
 engine = create_engine(conn_string)
 
-###### FUNCTIONS #######
+
+
+########## FUNCTIONS BEGIN ##########
 
 # define database insert function
-def insert_db(dataframe, _engine, table):
+def insert_db(dataframe, engine, table):
     conn = engine.connect()
     try:
         dataframe.to_sql(table, conn, if_exists='append', index=False)
@@ -45,12 +44,45 @@ def Get_Sample_Qty(CaseQty):
         if CaseQty < key:
             return Sample_Qty_dic.get(key)
 
+# define Accept/Reject function to control acceptance threshold. Dependent on defect severity and defect qty and Caseqty
+Major_dict = {500:1, 1200:2, 3200:3, 10000:4, 35000:6}
+Minor_dict = {90:1, 280:2, 500: 3, 1200: 4, 3200:6, 10000:8, 35000:11}
+Accept ='<p style="font-family:sans-serif; color:Green; font-size: 42px;">Accept</p>'
+Reject ='<p style="font-family:sans-serif; color:Red; font-size: 42px;">Reject</p>'
+def Major(DefQty, CaseQty):
+    for key in Major_dict:
+        if CaseQty < key: 
+            if DefQty < Major_dict.get(key):
+                return "Accept"
+            else:
+                return "Reject"
 
-def Accept_Reject(DefQty):
-    if DefQty > 3 and Defect_Severity == "Major":
-        return "Reject"
-    else:
-        return "Accept"
+def Minor(DefQty, CaseQty):
+    for key in Minor_dict:
+        if CaseQty < key: 
+            if DefQty < Minor_dict.get(key):
+                return "Accept"
+            else:
+                return "Reject"
+
+@st.cache
+def Accept_Reject(DefQty, CaseQty, Severity):
+    if Severity == "Critical":
+        if DefQty < 1:
+            return "Accept"
+        else: 
+            return "Reject"
+    elif Severity == "Major":
+        return Major(DefQty, CaseQty)
+    
+    elif Severity == "Minor":
+        return Minor(DefQty, CaseQty)
+
+########## FUNCTIONS END ##########
+
+
+
+########## SUPPORTING LIST OBJECTS BEGIN ###########
 
 # create arrays for multiple choice drop down inputs
 Gluer_List = ['Gluer #2 Bobst', 'GLUER #4 Omega', 'GLUER #5 6FX', 'GLUER #6 6FX', 'GLUER #7 BOBST', 'GLUER #8 BOBST', 'GLUER #9 OMEGA', 'GLUER #10 OMEGA', 'GLUER#11 International']
@@ -62,29 +94,24 @@ Defect_List = []
 defects = pd.read_sql('dim_defect', engine)
 Defect_List = Defect_List_Generator(defects)
 
-######## FORM UI ##########
+########## LISTS END ##########
 
-#Title Area
 
+
+########## FORM UI BEGINS ###########
+
+# Title Area
 logo = Image.open("Small Curtis Logo.jpg")
 st.set_page_config(page_title="Final Inspection Form", page_icon= logo, layout="centered")
 st.image(logo, width=100, )
 st.title("Final Inspection Form")
-
-# try to use button to hid camera_input 
-
 st.subheader("Job Information")
 st.markdown("---")
-
-
 JobID = st.text_input(label="Job Number", max_chars=6)
-
 ItemID = st.text_input(label="Item Number", max_chars=9, value="CPC")
-
 CustomerID = st.selectbox(label="Customer", options=Customer_List)
 CaseQty  = st.number_input(label="Case Qty", step=1)
 NumberofCases = st.number_input("Number of Cases", step=1)
-
 st.subheader("Inspection Information")
 st.markdown("---")
 InspectorID = st.number_input(label="Inspector Number", step=1, value=0)
@@ -120,7 +147,7 @@ for i in range(st.session_state.n_rows):
         Defect_Code = st.selectbox(label="Defect Code", options=Defect_List, key=f"defect_code{i}", help="Select a defect. If no samples are defective, select None")
     
     with col3:
-        Defect_Severity = st.selectbox(label="Severity", options=["Minor", "Major"], key=f"defect_severity{i}")
+        Defect_Severity = st.selectbox(label="Severity", options=["Minor", "Major", "Critical"], key=f"defect_severity{i}")
     
     with col4:
         Pieces_Defective  = st.number_input(label="Qty Defective", step=1, key=f"pieces_defective{i}")
@@ -130,7 +157,7 @@ for i in range(st.session_state.n_rows):
         Total_Pieces_Sampled = st.number_input(label="Total Samples", value=Sample_Qty, key=f"SampleQty{i}")
 
     with col6:
-        Accept_Reject_Value = Accept_Reject(Pieces_Defective)
+        Accept_Reject_Value = Accept_Reject(Pieces_Defective, CaseQty, Defect_Severity)
         Case_Verdict = st.text_input(label="Accept/Reject",value=Accept_Reject_Value, key=f"case_verdict{i}")
 
     Defective_Case[i] = {
@@ -143,7 +170,13 @@ for i in range(st.session_state.n_rows):
 
 st.markdown("**Don't press submit again after submission confirmation.  To enter another submission, refresh the page.*")
 submit = st.button("Submit", key=1)
-# st.write(st.session_state)
+
+########## FORM UI ENDS ##########
+
+
+
+########## DATA STRUCTURING BEGINS ##########
+
 # structure input data into dictionary 
 submissiondict = {
             "jobid" : JobID,
@@ -157,6 +190,12 @@ submissiondict = {
                 }
 
 columns = submissiondict.keys()
+
+########## DATA STRUCTURING ENDS ##########
+
+
+
+########## DATA EXTRACTION BEGINS ##########
 
 # Configure database insert upon submission
 if submit:
@@ -181,3 +220,5 @@ if submit:
     df.to_csv("Q:\Final Inspection Form Raw Exports/TEST_"+f"{str(DateFound)}"+f"_{CustomerID}"+f"_{Case_Number}.csv", index=False, )  
     # st.write(df)
     insert_db(df, engine, "stage_defect_event")
+
+########## DATA EXTRACTION ENDS ##########
