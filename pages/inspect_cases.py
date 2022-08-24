@@ -9,8 +9,7 @@ from sqlalchemy import create_engine
 from pyzbar.pyzbar import decode
 
 import toml
-
-
+from tomlkit import value
 
 #fetch dbcredentials
 credsfile = ".streamlit/secrets.toml"
@@ -21,15 +20,15 @@ engine = create_engine(conn_string)
 ###### FUNCTIONS #######
 
 # define database insert function
-def insert_db(dataframe, engine, table):
+def insert_db(dataframe, _engine, table):
     conn = engine.connect()
     try:
         dataframe.to_sql(table, conn, if_exists='append', index=False)
     except Exception:
-        st.warning("⚠️Error Encountered. Were any fields skipped?⚠️")
+        st.error("⚠️Error Encountered. Were any fields skipped?⚠️")
     else:
         st.success("Your submission was recorded.")
-        st.warning("**DON'T PRESS SUBMIT AGAIN.  To enter another submission, refresh the page.**")
+        st.warning("**DON'T PRESS SUBMIT AGAIN.  To enter another submission, refresh the page. ↻**")
     finally:
         conn.close()
 
@@ -40,36 +39,15 @@ def Defect_List_Generator(dataframe):
     return List
 
 # define auto-sample qty based on caseqty
+Sample_Qty_dic = {15:2,25:3,90:5,150:8,280:13,500:20,1200:32,3200:50,10000:80,35000:125,150000:200,500000:315}
 def Get_Sample_Qty(CaseQty):
-    if CaseQty in range(2,15):
-        return 2
-    if CaseQty in range(15,25):
-        return 3
-    if CaseQty in range(25,90):
-        return 5
-    if CaseQty in range(90,150):
-        return 8
-    if CaseQty in range(150,280):
-        return 13
-    if CaseQty in range(280,500):
-        return 20
-    if CaseQty in range(500,1200):
-        return 32
-    if CaseQty in range(1200,3200):
-        return 50
-    if CaseQty in range(3200,10000):
-        return 80
-    if CaseQty in range(10000,35000):
-        return 125
-    if CaseQty in range(35000,150000):
-        return 200
-    if CaseQty in range(150000,500000):
-        return 315
-    else:
-        return 0
+    for key in Sample_Qty_dic:
+        if CaseQty < key:
+            return Sample_Qty_dic.get(key)
+
 
 def Accept_Reject(DefQty):
-    if DefQty > 3:
+    if DefQty > 3 and Defect_Severity == "Major":
         return "Reject"
     else:
         return "Accept"
@@ -97,10 +75,16 @@ st.title("Final Inspection Form")
 
 st.subheader("Job Information")
 st.markdown("---")
+
+
 JobID = st.text_input(label="Job Number", max_chars=6)
-ItemID = st.text_input(label="Item Number", max_chars=9)
+
+ItemID = st.text_input(label="Item Number", max_chars=9, value="CPC")
+
 CustomerID = st.selectbox(label="Customer", options=Customer_List)
-CaseQty  = st.number_input(label="Case Qty", step=1, )
+CaseQty  = st.number_input(label="Case Qty", step=1)
+NumberofCases = st.number_input("Number of Cases", step=1)
+
 st.subheader("Inspection Information")
 st.markdown("---")
 InspectorID = st.number_input(label="Inspector Number", step=1, value=0)
@@ -114,35 +98,40 @@ st.markdown("---")
 Defective_Case = {}
 
 # formatting defective cases input looped section
+## Create session state variable for storing number of rows
 if 'n_rows' not in st.session_state:
     st.session_state.n_rows = 1
+if NumberofCases:
+    st.session_state.n_rows = NumberofCases
 
-add = st.button(label="Add Cases")
 
-if add:
+if st.button(label="Add Cases", key="add"):
     st.session_state.n_rows += 1
     # st.experimental_rerun()
 
 for i in range(st.session_state.n_rows):
     #add text inputs here
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4, col5, col6 = st.columns([1,1.5,.95,1,1,.65])
 
     with col1:
-        Case_Number = st.text_input(label="Case Number", key=i)
-    
-    with col2:
-        Defect_Code = st.selectbox(label="Defect Code", options=Defect_List, key=i, help="Select a defect. If no samples are defective, select None")
-        
-    with col3:
-        Pieces_Defective  = st.number_input(label="Qty Defective", step=1, key=i)
+        Case_Number = st.text_input(label=f"Case Number", key=f"case_number{i}")
 
-    with col4:
-        Sample_Qty = Get_Sample_Qty(CaseQty)
-        Total_Pieces_Sampled = st.number_input(label="Total Pieces Sampled", value=Sample_Qty, key=i)
+    with col2:
+        Defect_Code = st.selectbox(label="Defect Code", options=Defect_List, key=f"defect_code{i}", help="Select a defect. If no samples are defective, select None")
     
+    with col3:
+        Defect_Severity = st.selectbox(label="Severity", options=["Minor", "Major"], key=f"defect_severity{i}")
+    
+    with col4:
+        Pieces_Defective  = st.number_input(label="Qty Defective", step=1, key=f"pieces_defective{i}")
+
     with col5:
+        Sample_Qty = Get_Sample_Qty(CaseQty)
+        Total_Pieces_Sampled = st.number_input(label="Total Samples", value=Sample_Qty, key=f"SampleQty{i}")
+
+    with col6:
         Accept_Reject_Value = Accept_Reject(Pieces_Defective)
-        Case_Verdict = st.text_input(label="Accept/Reject",value=Accept_Reject_Value, key=i)
+        Case_Verdict = st.text_input(label="Accept/Reject",value=Accept_Reject_Value, key=f"case_verdict{i}")
 
     Defective_Case[i] = {
                             "caseid" : Case_Number,
@@ -151,9 +140,10 @@ for i in range(st.session_state.n_rows):
                             "totalsamples" : Total_Pieces_Sampled,
                             "caseverdict" : Case_Verdict
                         }
+
 st.markdown("**Don't press submit again after submission confirmation.  To enter another submission, refresh the page.*")
 submit = st.button("Submit", key=1)
-
+# st.write(st.session_state)
 # structure input data into dictionary 
 submissiondict = {
             "jobid" : JobID,
@@ -189,5 +179,5 @@ if submit:
     # df['defectdesc']= [x.split('-')[0] for x in df['defectcode']]
     df[['defectcode','defectdesc']]= df['defectcode'].str.split('-', n=2, expand=True)
     df.to_csv("Q:\Final Inspection Form Raw Exports/TEST_"+f"{str(DateFound)}"+f"_{CustomerID}"+f"_{Case_Number}.csv", index=False, )  
-    st.write(df)
+    # st.write(df)
     insert_db(df, engine, "stage_defect_event")
