@@ -111,7 +111,6 @@ JobID = st.text_input(label="Job Number", max_chars=6)
 ItemID = st.text_input(label="Item Number", max_chars=9, value="CPC")
 CustomerID = st.selectbox(label="Customer", options=Customer_List)
 CaseQty  = st.number_input(label="Case Qty", step=1)
-NumberofCases = st.number_input("Number of Cases", step=1)
 st.subheader("Inspection Information")
 st.markdown("---")
 InspectorID = st.number_input(label="Inspector Number", step=1, value=0)
@@ -120,7 +119,7 @@ InspectShift  = st.selectbox(label="Inspection Shift", options=Shift_List)
 DateFound = st.date_input("Inspection Date")
 st.subheader("Cases")
 st.markdown("---")
-
+NumberofCases = st.number_input("Number of Cases", step=1)
 # create blank dictionary for defective cases
 Defective_Case = {}
 
@@ -130,11 +129,6 @@ if 'n_rows' not in st.session_state:
     st.session_state.n_rows = 1
 if NumberofCases:
     st.session_state.n_rows = NumberofCases
-
-
-if st.button(label="Add Cases", key="add"):
-    st.session_state.n_rows += 1
-    # st.experimental_rerun()
 
 for i in range(st.session_state.n_rows):
     #add text inputs here
