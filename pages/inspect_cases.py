@@ -33,10 +33,14 @@ def insert_db(dataframe, engine, table):
 
 # define Defect List Generator function
 def Defect_List_Generator(dataframe):
-    Defectcode_desc = dataframe['defectcode'] + '-' + dataframe['defectdesc']
+    Defectcode_desc = dataframe['defectcode'] + "-" + dataframe['defectdesc']
     List = Defectcode_desc.to_list()
     return List
 
+def Customer_List_Generator(dataframe):
+    Customer_Dataframe = dataframe.CustomerName + " - " + dataframe.CustomerID
+    Customer_List = Customer_Dataframe.to_list()
+    return Customer_List
 # define auto-sample qty based on caseqty
 Sample_Qty_dic = {15:2,25:3,90:5,150:8,280:13,500:20,1200:32,3200:50,10000:80,35000:125,150000:200,500000:315}
 def Get_Sample_Qty(CaseQty):
@@ -87,7 +91,11 @@ def Accept_Reject(DefQty, CaseQty, Severity):
 # create arrays for multiple choice drop down inputs
 Gluer_List = ['Gluer #2 Bobst', 'GLUER #4 Omega', 'GLUER #5 6FX', 'GLUER #6 6FX', 'GLUER #7 BOBST', 'GLUER #8 BOBST', 'GLUER #9 OMEGA', 'GLUER #10 OMEGA', 'GLUER#11 International']
 Shift_List = ['1st Shift', '2nd Shift', 'Weekend Shift']
-Customer_List = ['Titleist', 'Arden']
+
+# Customer List
+Customer_List = []
+Customers = pd.read_csv("C:\\Users\\jcohen\\OneDrive - Curtis Packaging Corporation\\Documents\\Justin\\DataTransformations\\CustomerList\\CustomersPreped.csv")
+Customer_List = Customer_List_Generator(Customers)
 
 # Defects list
 Defect_List = []
@@ -110,6 +118,10 @@ st.markdown("---")
 JobID = st.text_input(label="Job Number", max_chars=6)
 ItemID = st.text_input(label="Item Number", max_chars=9, value="CPC")
 CustomerID = st.selectbox(label="Customer", options=Customer_List)
+
+if CustomerID == "Parlux Fragrances, Inc. - PARLUX":
+    st.info("Customer Requires 25 Samples.")
+
 CaseQty  = st.number_input(label="Case Qty", step=1)
 st.subheader("Inspection Information")
 st.markdown("---")
@@ -119,7 +131,9 @@ InspectShift  = st.selectbox(label="Inspection Shift", options=Shift_List)
 DateFound = st.date_input("Inspection Date")
 st.subheader("Cases")
 st.markdown("---")
-NumberofCases = st.number_input("Number of Cases", step=1)
+col1,col2,col3,col4,col5, col6 = st.columns(6)
+with col1:
+    NumberofCases = st.number_input("Number of Cases", step=1, value=1)
 # create blank dictionary for defective cases
 Defective_Case = {}
 
@@ -211,8 +225,10 @@ if submit:
     # df['defectcode']= [x.split('-')[-1] for x in df['defectcode']]
     # df['defectdesc']= [x.split('-')[0] for x in df['defectcode']]
     df[['defectcode','defectdesc']]= df['defectcode'].str.split('-', n=2, expand=True)
+    df[['customername', 'customerid']] = df['customerid'].str.split(' - ', n=2, expand=True)
     df.to_csv("Q:\Final Inspection Form Raw Exports/TEST_"+f"{str(DateFound)}"+f"_{CustomerID}"+f"_{Case_Number}.csv", index=False, )  
-    # st.write(df)
+    df = df.drop(df.columns[[13]], axis=1)
+    st.write(df)
     insert_db(df, engine, "stage_defect_event")
 
 ########## DATA EXTRACTION ENDS ##########
