@@ -60,27 +60,6 @@ There were a few key features that the Director of Quality and the inspection te
 
 ## Walking Through the Logic of the Code
 
-This page walks through the code behind the Final Inspection App. 
-
-We will take it block by block. Blocks will be separated into lines that are logically and functionally related.
-
-Let’s get started!
-
-
-
-### Prerequisites
-
-* In order to be able to understand, troubleshoot, and improve the code behind this application a few prerequisites are necessary:
-
-* Proficient in Python
-
-* Experience with Pandas, SQLAlchemy
-
-- Strong understanding of database design and management
-
-* Experience using command line
-
-
 
 ### Importing our modules
 
