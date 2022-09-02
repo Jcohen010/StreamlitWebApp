@@ -226,7 +226,7 @@ if submit:
     # df['defectdesc']= [x.split('-')[0] for x in df['defectcode']]
     df[['defectcode','defectdesc']]= df['defectcode'].str.split('-', n=2, expand=True)
     df[['customername', 'customerid']] = df['customerid'].str.split(' - ', n=2, expand=True)
-    df.to_csv("Q:\Final Inspection Form Raw Exports/TEST_"+f"{str(DateFound)}"+f"_{CustomerID}"+f"_{Case_Number}.csv", index=False, )  
+    df.to_csv("Q:\Final Inspection Form Raw Exports/TEST_"+f"{str(DateFound)}"+f"_{CustomerID}"+f"_{JobID}.csv", index=False, )  
     df = df.drop(df.columns[[13]], axis=1)
     st.write(df)
     insert_db(df, engine, "stage_defect_event")
